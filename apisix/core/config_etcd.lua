@@ -329,6 +329,7 @@ end
 
 
 local function _automatic_fetch(premature, self)
+
     if premature then
         return
     end

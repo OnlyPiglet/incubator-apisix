@@ -38,7 +38,7 @@ local pkg_path_org = package.path
 
 local apisix_home = "/usr/local/apisix"
 local pkg_cpath = apisix_home .. "/deps/lib64/lua/5.1/?.so;"
-                  .. apisix_home .. "/deps/lib/lua/5.1/?.so;;"
+        .. apisix_home .. "/deps/lib/lua/5.1/?.so;;"
 local pkg_path  = apisix_home ..    "/deps/share/lua/5.1/?.lua;;"
 
 -- only for developer, use current folder as working space
@@ -51,13 +51,13 @@ if script_path:sub(1, 2) == './' then
     end
 
     if string.match(apisix_home, '^/[root][^/]+') then
-            is_root_path = true
+        is_root_path = true
     end
 
     pkg_cpath = apisix_home .. "/deps/lib64/lua/5.1/?.so;"
-                .. apisix_home .. "/deps/lib/lua/5.1/?.so;"
+            .. apisix_home .. "/deps/lib/lua/5.1/?.so;"
     pkg_path  = apisix_home .. "/?/init.lua;"
-                .. apisix_home .. "/deps/share/lua/5.1/?.lua;;"
+            .. apisix_home .. "/deps/share/lua/5.1/?.lua;;"
 end
 -- print("apisix_home: ", apisix_home)
 
@@ -71,8 +71,8 @@ do
         local ok, json = pcall(require, "cjson")
         if ok and json then
             io.stderr:write("please remove the cjson library in Lua, it may "
-                            .. "conflict with the cjson library in openresty. "
-                            .. "\n luarocks remove cjson\n")
+                    .. "conflict with the cjson library in openresty. "
+                    .. "\n luarocks remove cjson\n")
             return
         end
     end
@@ -112,10 +112,10 @@ env APISIX_PROFILE;
 {% if stream_proxy then %}
 stream {
     lua_package_path  "$prefix/deps/share/lua/5.1/?.lua;]=]
-                      .. [=[{*apisix_lua_home*}/?.lua;{*apisix_lua_home*}/?/init.lua;;{*lua_path*};";
+        .. [=[{*apisix_lua_home*}/?.lua;{*apisix_lua_home*}/?/init.lua;;{*lua_path*};";
     lua_package_cpath "$prefix/deps/lib64/lua/5.1/?.so;]=]
-                      .. [=[$prefix/deps/lib/lua/5.1/?.so;;]=]
-                      .. [=[{*lua_cpath*};";
+        .. [=[$prefix/deps/lib/lua/5.1/?.so;;]=]
+        .. [=[{*lua_cpath*};";
     lua_socket_log_errors off;
 
     resolver {% for _, dns_addr in ipairs(dns_resolver or {}) do %} {*dns_addr*} {% end %} valid={*dns_resolver_valid*};
@@ -165,10 +165,10 @@ stream {
 
 http {
     lua_package_path  "$prefix/deps/share/lua/5.1/?.lua;]=]
-                       .. [=[{*apisix_lua_home*}/?.lua;{*apisix_lua_home*}/?/init.lua;;{*lua_path*};";
+        .. [=[{*apisix_lua_home*}/?.lua;{*apisix_lua_home*}/?/init.lua;;{*lua_path*};";
     lua_package_cpath "$prefix/deps/lib64/lua/5.1/?.so;]=]
-                      .. [=[$prefix/deps/lib/lua/5.1/?.so;;]=]
-                      .. [=[{*lua_cpath*};";
+        .. [=[$prefix/deps/lib/lua/5.1/?.so;;]=]
+        .. [=[{*lua_cpath*};";
 
     lua_shared_dict plugin-limit-req     10m;
     lua_shared_dict plugin-limit-count   10m;
@@ -577,7 +577,7 @@ local function split(self, sep)
     local pattern = string.format("([^%s]+)", sep)
     self:gsub(pattern, function(c) fields[#fields + 1] = c end)
     return fields
- end
+end
 
 local function check_or_version(cur_ver_s, need_ver_s)
     local cur_vers = split(cur_ver_s, [[.]])
@@ -637,7 +637,7 @@ end
 local function init()
     if is_root_path then
         print('Warning! Running apisix under /root is only suitable for development environments'
-            .. ' and it is dangerous to do so. It is recommended to run APISIX in a directory other than /root.')
+                .. ' and it is dangerous to do so. It is recommended to run APISIX in a directory other than /root.')
     end
 
     -- read_yaml_conf
@@ -651,8 +651,8 @@ local function init()
     local with_module_status = true
     if or_ver and not or_ver:find("http_stub_status_module", 1, true) then
         io.stderr:write("'http_stub_status_module' module is missing in ",
-                        "your openresty, please check it out. Without this ",
-                        "module, there will be fewer monitoring indicators.\n")
+                "your openresty, please check it out. Without this ",
+                "module, there will be fewer monitoring indicators.\n")
         with_module_status = false
     end
 
@@ -803,7 +803,7 @@ end
 _M.init_etcd = init_etcd
 
 local openresty_args = [[openresty  -p ]] .. apisix_home .. [[ -c ]]
-                       .. apisix_home .. [[/conf/nginx.conf]]
+        .. apisix_home .. [[/conf/nginx.conf]]
 
 function _M.start(...)
     init(...)
@@ -821,8 +821,8 @@ function _M.stop()
 end
 
 function _M.restart()
-  _M.stop()
-  _M.start()
+    _M.stop()
+    _M.start()
 end
 
 function _M.reload()
