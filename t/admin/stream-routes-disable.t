@@ -14,79 +14,66 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-BEGIN {
-    # for test
-    $ENV{ENABLE_LOCAL_DNS} = "true";
-}
-
 use t::APISIX 'no_plan';
+use Cwd qw(cwd);
 
 repeat_each(1);
-log_level('info');
-worker_connections(256);
+no_long_string();
 no_root_location();
 no_shuffle();
+log_level("info");
 
-run_tests();
+my $apisix_home = $ENV{APISIX_HOME} || cwd();
+
+sub read_file($) {
+    my $infile = shift;
+    open my $in, "$apisix_home/$infile"
+        or die "cannot open $infile for reading: $!";
+    my $data = do { local $/; <$in> };
+    close $in;
+    $data;
+}
+
+my $yaml_config = read_file("conf/config.yaml");
+$yaml_config =~ s/node_listen: 9080/node_listen: 1984/;
+$yaml_config =~ s/enable_heartbeat: true/enable_heartbeat: false/;
+$yaml_config =~ s/admin_key:/disable_admin_key:/;
+
+add_block_preprocessor(sub {
+    my ($block) = @_;
+
+    $block->set_value("yaml_config", $yaml_config);
+});
+
+run_tests;
 
 __DATA__
 
-=== TEST 1: set route(id: 1)
+=== TEST 1: set route(disabled stream model)
 --- config
     location /t {
         content_by_lua_block {
             local t = require("lib.test_admin").test
-            local code, body = t('/apisix/admin/routes/1',
-                 ngx.HTTP_PUT,
-                 [[{
-                        "upstream": {
-                            "nodes": {
-                                "127.0.0.1:1980": 1,
-                                "baidu.com:80": 0
-                            },
-                            "type": "roundrobin"
+            local code, body = t('/apisix/admin/stream_routes/1',
+                ngx.HTTP_PUT,
+                [[{
+                    "remote_addr": "127.0.0.1",
+                    "upstream": {
+                        "nodes": {
+                            "127.0.0.1:8080": 1
                         },
-                        "uri": "/hello"
+                        "type": "roundrobin"
+                    },
+                    "desc": "new route"
                 }]]
                 )
 
-            if code >= 300 then
-                ngx.status = code
-            end
+            ngx.status = code
             ngx.say(body)
         }
     }
 --- request
 GET /t
---- response_body
-passed
---- error_log eval
-qr/.*parse_args\(\): dns resolver\[.+\]/
+--- error_code: 400
 --- no_error_log
 [error]
-
-
-
-=== TEST 2: /not_found
---- request
-GET /not_found
---- error_code: 404
---- response_body
-{"error_msg":"failed to match any routes"}
---- error_log eval
-qr/.*parse_args\(\): dns resolver\[.+\]/
---- no_error_log
-[error]
-
-
-
-=== TEST 3: hit route
---- request
-GET /hello
---- response_body
-hello world
---- no_error_log
-[error]
---- error_log eval
-qr/dns resolver domain: baidu.com to \d+.\d+.\d+.\d+/
