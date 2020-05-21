@@ -31,6 +31,11 @@
 
 This will provide the ability to send Log data requests as JSON objects to Monitoring tools and other UDP servers.
 
+This plugin provides the ability to push Log data as a batch to you're external UDP servers. In case if you did not recieve the log data don't worry give it some time it will automatically send the logs after the timer function expires in our Batch Processor.
+
+For more info on Batch-Processor in Apache APISIX please refer.
+[Batch-Processor](../batch-processor.md)
+
 ## Attributes
 
 |Name           |Requirement    |Description|
@@ -48,26 +53,23 @@ This will provide the ability to send Log data requests as JSON objects to Monit
 The following is an example on how to enable the udp-logger for a specific route.
 
 ```shell
-curl http://127.0.0.1:9080/apisix/admin/consumers -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
+curl http://127.0.0.1:9080/apisix/admin/routes/5 -H 'X-API-KEY: edd1c9f034335f136f87ad84b625c8f1' -X PUT -d '
 {
-    "username": "foo",
-    "plugins": {
-          "plugins": {
-                "udp-logger": {
-                     "host": "127.0.0.1",
-                     "port": 3000,
-                     "batch_max_size": 1,
-                     "name": "udp logger"
-                }
-           },
-          "upstream": {
-               "type": "roundrobin",
-               "nodes": {
-                   "127.0.0.1:1980": 1
-               }
-          },
-          "uri": "/hello"
-    }
+      "plugins": {
+            "udp-logger": {
+                 "host": "127.0.0.1",
+                 "port": 3000,
+                 "batch_max_size": 1,
+                 "name": "udp logger"
+            }
+       },
+      "upstream": {
+           "type": "roundrobin",
+           "nodes": {
+               "127.0.0.1:1980": 1
+           }
+      },
+      "uri": "/hello"
 }'
 ```
 

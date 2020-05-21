@@ -39,7 +39,7 @@ APISIX is a cloud-based microservices API gateway that handles traditional north
 
 APISIX provides dynamic load balancing, authentication, rate limiting, other plugins through plugin mechanisms, and supports plugins you develop yourself.
 
-For more detailed information, see the [White Paper](https://www.iresty.com/download/Choosing%20the%20Right%20Microservice%20API%20Gateway%20for%20the%20Enterprise%20User.pdf).
+For more detailed information, see the [White Paper](https://static.apiseven.com/2020/05/1589275276-Choosing-the-Right-Microservice-API-Gateway-for-the-Enterprise-User.pdf).
 
 ![](doc/images/apisix.png)
 
@@ -81,6 +81,7 @@ A/B testing, canary release, blue-green deployment, limit rate, defense against 
     - IPv6: Use IPv6 to match route.
     - Support [TTL](doc/admin-api-cn.md#route)
     - [Support priority](doc/router-radixtree.md#3-match-priority)
+    - [Support Batch Http Requests](doc/plugins/batch-requests.md)
 
 - **Security**
     - Authentications: [key-auth](doc/plugins/key-auth.md), [JWT](doc/plugins/jwt-auth.md), [basic-auth](doc/plugins/basic-auth.md), [wolf-rbac](doc/plugins/wolf-rbac.md)
